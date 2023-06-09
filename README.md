@@ -48,7 +48,7 @@ Would like to run this project locally? Open terminal and follow these steps:
 
 -   Add new breed to the dictionary by sending body with `{ breed, description }`.
 
-### `GET /api/glossary/:id`
+### `GET /api/breeds/:id`
 
 -   Get breed using ID number.
 
