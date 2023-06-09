@@ -44,7 +44,7 @@ Would like to run this project locally? Open terminal and follow these steps:
 
 -   Get all breeds already existing in the dictionary.
 
-### `POST /api/word`
+### `POST /api/breed`
 
 -   Add new breed to the dictionary by sending body with `{ breed, description }`.
 

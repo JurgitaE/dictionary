@@ -7,7 +7,7 @@ app.use(express.json());
 const breedsFolderPath = './breeds';
 
 // POST: /api/word - objektas su kuriamu žodžiu;
-app.post('/api/word', (req, res) => {
+app.post('/api/breed', (req, res) => {
     const id = Date.now();
     const { description, breed } = req.body;
 
@@ -28,7 +28,6 @@ app.post('/api/word', (req, res) => {
     res.status(201).json({ message: `${breedObject.breed} successfully added.` });
 });
 
-// GET: /api/dictionary - gauti visą sąrašą
 app.get('/api/breeds', (req, res) => {
     const fileList = fs.readdirSync(breedsFolderPath);
     const breedsList = [];
@@ -41,7 +40,7 @@ app.get('/api/breeds', (req, res) => {
 
     res.json(fileList);
 });
-// GET: /api/dictionary/[id] - gauti visą žodžio informaciją pagal jo ID;
+
 app.get('/api/breeds/:id', (req, res) => {
     const id = req.params.id;
 
@@ -54,8 +53,6 @@ app.get('/api/breeds/:id', (req, res) => {
     } else {
         res.status(404).json({ message: 'No such breed found' });
     }
-
-    // res.json({ found: fileExists });
 });
 
 app.listen(port, () => {
