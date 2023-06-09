@@ -6,7 +6,6 @@ const port = 3000;
 app.use(express.json());
 const breedsFolderPath = './breeds';
 
-// POST: /api/word - objektas su kuriamu žodžiu;
 app.post('/api/breed', (req, res) => {
     const id = Date.now();
     const { description, breed } = req.body;
@@ -38,7 +37,7 @@ app.get('/api/breeds', (req, res) => {
         breedsList.push(breedObject);
     }
 
-    res.json(fileList);
+    res.json(breedsList);
 });
 
 app.get('/api/breeds/:id', (req, res) => {
