@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 const express = require('express');
 const fs = require('fs');
 const app = express();
@@ -5,16 +6,19 @@ const port = 3000;
 
 app.use(express.json());
 const breedsFolderPath = './breeds';
+if (!fs.existsSync(breedsFolderPath)) {
+    fs.mkdirSync(breedsFolderPath);
+}
 
 app.post('/api/breed', (req, res) => {
-    const id = Date.now();
+    const id = uuidv4();
     const { description, breed } = req.body;
 
     const breedObject = {
         id,
         breed,
         description,
-        creationTime: new Date(id),
+        creationTime: Date.now(),
     };
     const fileName = `${breed
         .toLowerCase()
