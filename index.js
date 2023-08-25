@@ -1,3 +1,4 @@
+const objectListFromFiles = require('./helper_funcs/objectListFromFiles');
 const { v4: uuidv4 } = require('uuid');
 const express = require('express');
 const fs = require('fs');
@@ -32,16 +33,7 @@ app.post('/api/breed', (req, res) => {
 });
 
 app.get('/api/breeds', (req, res) => {
-    const fileList = fs.readdirSync(breedsFolderPath);
-    const breedsList = [];
-
-    for (const file of fileList) {
-        const fileData = fs.readFileSync(`${breedsFolderPath}/${file}`);
-        const breedObject = JSON.parse(fileData);
-        breedsList.push(breedObject);
-    }
-
-    res.json(breedsList);
+    res.json(objectListFromFiles(breedsFolderPath));
 });
 
 app.get('/api/breeds/:id', (req, res) => {
