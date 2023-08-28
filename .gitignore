@@ -2,3 +2,5 @@
 /.vscode
 .DS_Store
 /breeds
+/pagination
+/helper_funcs
