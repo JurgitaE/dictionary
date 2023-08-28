@@ -61,7 +61,6 @@ app.get('/api/breeds/:id', (req, res) => {
 
 app.get('/api/breeds-page', (req, res) => {
     const { default: def } = JSON.parse(fs.readFileSync('./pagination/paginationSettings.json', 'utf8'));
-    console.log(def);
     const pageObj = {
         prev: '',
         list: [],
@@ -72,7 +71,6 @@ app.get('/api/breeds-page', (req, res) => {
     // sorting
     if (breedListData.length >= 2) {
         breedListData.sort((a, b) => {
-            console.log('obj', a, b);
             if (a.breed === b.breed) {
                 return a.creationTime > b.creationTime ? 1 : -1;
             }
@@ -84,21 +82,39 @@ app.get('/api/breeds-page', (req, res) => {
     res.json(pageObj);
 });
 
-/* app.get('/api/breeds-page/:page', (req, res) => {
-    const requestedPage = req.params.page;
-    const { max, min, def } = JSON.parse(fs.readFileSync('./pagination/paginationSettings.json', 'utf8'));
+app.get('/api/breeds-page/:page', (req, res) => {
+    const requestedPage = +req.params.page;
     let breedListData = fs.readFileSync(`./pagination/breed_list.json`, 'utf8');
     breedListData = JSON.parse(breedListData);
+    const { max, min, default: def } = JSON.parse(fs.readFileSync('./pagination/paginationSettings.json', 'utf8'));
     const totalPages = Math.ceil(breedListData.length / def);
-    if (requestedPage > 0 && requestedPage < totalPages) {
-        // res.json({
-        //     "prev": "",
-        //     "list": [...],
-        //     "next": "/api/dictionary-page/2"
-        //   })
+    if (requestedPage > 0 && requestedPage <= totalPages) {
+        const pageObj = {
+            prev: '',
+            list: [],
+            next: '',
+        };
+        // sorting
+        if (breedListData.length >= 2) {
+            breedListData.sort((a, b) => {
+                if (a.breed === b.breed) {
+                    return a.creationTime > b.creationTime ? 1 : -1;
+                }
+                return a.breed.localeCompare(b.breed);
+            });
+        }
+        pageObj.prev = requestedPage !== 1 ? `/api/breeds-page/${requestedPage - 1}` : '';
+        pageObj.list =
+            totalPages === requestedPage
+                ? breedListData.slice(-breedListData.length % def)
+                : breedListData.slice((requestedPage - 1) * def, (requestedPage - 1) * def + def);
+        pageObj.next = totalPages !== requestedPage ? `/api/breeds-page/${requestedPage + 1}` : '';
+        res.json(pageObj);
+    } else {
+        res.status(404).json({ message: `Page ${requestedPage} not found` });
     }
-    // For demonstration purposes, let's send a response indicating the requested page
-}); */
+});
+
 app.listen(port, () => {
     console.log(`Dictionary API is on port number: ${port}`);
 });
