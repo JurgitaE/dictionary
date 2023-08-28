@@ -14,11 +14,7 @@ const paginationFolderPath = './pagination';
 if (!fs.existsSync(paginationFolderPath)) {
     fs.mkdirSync(paginationFolderPath);
     fs.writeFileSync(`./pagination/breed_list.json`, JSON.stringify([]), 'utf8');
-    fs.writeFileSync(
-        `./pagination/paginationSettings.json`,
-        JSON.stringify((module.exports = { default: 5, min: 2, max: 20 })),
-        'utf8'
-    );
+    fs.writeFileSync(`./pagination/paginationSettings.json`, JSON.stringify({ default: 2, min: 2, max: 20 }), 'utf8');
 }
 
 app.post('/api/breed', (req, res) => {
@@ -64,19 +60,45 @@ app.get('/api/breeds/:id', (req, res) => {
 });
 
 app.get('/api/breeds-page', (req, res) => {
+    const { default: def } = JSON.parse(fs.readFileSync('./pagination/paginationSettings.json', 'utf8'));
+    console.log(def);
+    const pageObj = {
+        prev: '',
+        list: [],
+        next: '',
+    };
+    let breedListData = fs.readFileSync(`./pagination/breed_list.json`, 'utf8');
+    breedListData = JSON.parse(breedListData);
+    // sorting
+    if (breedListData.length >= 2) {
+        breedListData.sort((a, b) => {
+            console.log('obj', a, b);
+            if (a.breed === b.breed) {
+                return a.creationTime > b.creationTime ? 1 : -1;
+            }
+            return a.breed.localeCompare(b.breed);
+        });
+    }
+    pageObj.list = breedListData.slice(0, def);
+    pageObj.next = breedListData.length / def > 1 ? '/api/breeds-page/2' : '';
+    res.json(pageObj);
+});
+
+/* app.get('/api/breeds-page/:page', (req, res) => {
+    const requestedPage = req.params.page;
     const { max, min, def } = JSON.parse(fs.readFileSync('./pagination/paginationSettings.json', 'utf8'));
     let breedListData = fs.readFileSync(`./pagination/breed_list.json`, 'utf8');
     breedListData = JSON.parse(breedListData);
-    const sortedBreedList = breedListData.sort((a, b) => {
-        console.log('obj', a, b);
-        if (a.breed === b.breed) {
-            return a.creationTime > b.creationTime ? 1 : -1;
-        }
-        return a.breed.localeCompare(b.breed);
-    });
-    res.json(sortedBreedList);
-});
-
+    const totalPages = Math.ceil(breedListData.length / def);
+    if (requestedPage > 0 && requestedPage < totalPages) {
+        // res.json({
+        //     "prev": "",
+        //     "list": [...],
+        //     "next": "/api/dictionary-page/2"
+        //   })
+    }
+    // For demonstration purposes, let's send a response indicating the requested page
+}); */
 app.listen(port, () => {
     console.log(`Dictionary API is on port number: ${port}`);
 });
