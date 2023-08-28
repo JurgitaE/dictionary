@@ -14,7 +14,7 @@ const paginationFolderPath = './pagination';
 if (!fs.existsSync(paginationFolderPath)) {
     fs.mkdirSync(paginationFolderPath);
     fs.writeFileSync(`./pagination/breed_list.json`, JSON.stringify([]), 'utf8');
-    fs.writeFileSync(`./pagination/paginationSettings.json`, JSON.stringify({ default: 2, min: 2, max: 20 }), 'utf8');
+    fs.writeFileSync(`./pagination/paginationSettings.json`, JSON.stringify({ default: 5, min: 2, max: 20 }), 'utf8');
 }
 
 app.post('/api/breed', (req, res) => {
