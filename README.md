@@ -60,6 +60,10 @@ Would like to run this project locally? Open terminal and follow these steps:
 
 -   Get indicated breed list page (sorted A-Z-> date posted) with default page size
 
+### `GET /api/breeds-page/:page/:pageSize`
+
+-   Get indicated breed list page (sorted A-Z-> date posted) with indicated page size
+
 ### 🧪 Running tests
 
 There are no tests for this project.

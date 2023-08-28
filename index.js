@@ -94,7 +94,6 @@ app.get('/api/breeds-page/:page', (req, res) => {
             list: [],
             next: '',
         };
-        // sorting
         if (breedListData.length >= 2) {
             breedListData.sort((a, b) => {
                 if (a.breed === b.breed) {
@@ -112,6 +111,44 @@ app.get('/api/breeds-page/:page', (req, res) => {
         res.json(pageObj);
     } else {
         res.status(404).json({ message: `Page ${requestedPage} not found` });
+    }
+});
+app.get('/api/breeds-page/:page/:pageSize', (req, res) => {
+    const requestedPage = +req.params.page;
+
+    let breedListData = fs.readFileSync(`./pagination/breed_list.json`, 'utf8');
+    breedListData = JSON.parse(breedListData);
+    let { max, min, default: def } = JSON.parse(fs.readFileSync('./pagination/paginationSettings.json', 'utf8'));
+    def = +req.params.pageSize;
+
+    const totalPages = Math.ceil(breedListData.length / def);
+    if (requestedPage > 0 && requestedPage <= totalPages && def >= min && def <= max) {
+        const pageObj = {
+            prev: '',
+            list: [],
+            next: '',
+        };
+        if (breedListData.length >= 2) {
+            breedListData.sort((a, b) => {
+                if (a.breed === b.breed) {
+                    return a.creationTime > b.creationTime ? 1 : -1;
+                }
+                return a.breed.localeCompare(b.breed);
+            });
+        }
+        pageObj.prev = requestedPage !== 1 ? `/api/breeds-page/${requestedPage - 1}` : '';
+        pageObj.list =
+            totalPages === requestedPage
+                ? breedListData.slice(-breedListData.length % def)
+                : breedListData.slice((requestedPage - 1) * def, (requestedPage - 1) * def + def);
+        pageObj.next = totalPages !== requestedPage ? `/api/breeds-page/${requestedPage + 1}` : '';
+        res.json(pageObj);
+    } else {
+        if (!(requestedPage > 0 && requestedPage <= totalPages)) {
+            res.status(404).json({ message: `Page ${requestedPage} not found` });
+        } else {
+            res.status(404).json({ message: `Minimum items per page: 2; maximum items per page: 10` });
+        }
     }
 });
 
