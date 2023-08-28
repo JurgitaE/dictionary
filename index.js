@@ -1,4 +1,3 @@
-const objectListFromFiles = require('./helper_funcs/objectListFromFiles');
 const { v4: uuidv4 } = require('uuid');
 const express = require('express');
 const fs = require('fs');
