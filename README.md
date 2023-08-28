@@ -52,6 +52,14 @@ Would like to run this project locally? Open terminal and follow these steps:
 
 -   Get breed using ID number.
 
+### `GET /api/breeds-page`
+
+-   Get first breed list page (sorted A-Z-> date posted) with default page size
+
+### `GET /api/breeds-page/:page`
+
+-   Get indicated breed list page (sorted A-Z-> date posted) with default page size
+
 ### 🧪 Running tests
 
 There are no tests for this project.
